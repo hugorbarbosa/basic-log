@@ -1,6 +1,6 @@
-# C++ Logger
+# C++ logger
 
-Simple logger using C++.
+A simple logger implemented in C++.
 
 ## Table of contents
 
@@ -23,7 +23,7 @@ This project is structured in the following directories:
 
 ## Features
 
-The logger of this project is a simple logger that allows to log messages during the execution of the program. This log uses a stream of type `std::ostream`, so the user can choose the output stream to log messages (console, file, ...).
+The logger of this project is a simple logger that allows to log messages during the execution of a program. This log uses a stream of type `std::ostream`, so the user can choose the output stream to log messages (console, file, ...).
 
 The logger features the following levels:
 
@@ -35,7 +35,39 @@ The logger features the following levels:
 - Debug: logs debug messages and higher level messages.
 - Verbose: logs verbose messages and higher level messages.
 
-The logger is implemented [here](./src/logger/). An example of how to use it can be seen [here](./src/main.cpp), which results in the image below.
+The format of the output is the following:
+
+```sh
+[YYYY-MM-DD HH:MM:SS][Level] Message
+```
+
+The logger is implemented [here](./src/logger/). An example of how to use it can be seen in the following code snippet (extracted from [here](./src/main.cpp)).
+
+```C++
+#include <iostream>
+#include <logger/Logger.h>
+
+int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[])
+{
+    // Logger instance
+    const auto logger{std::make_unique<logger::Logger>(std::cout)};
+
+    // Log level
+    logger->setLogLevel(logger::Logger::LogLevel::VERBOSE);
+
+    // Messages with different log levels
+    logger->logFatal("Fatal message");
+    logger->logError("Error message");
+    logger->logWarning("Warning message");
+    logger->logInfo("Info message");
+    logger->logDebug("Debug message");
+    logger->logVerbose("Verbose message");
+
+    return 0;
+}
+```
+
+This example uses `std::cout` as output stream, and its result is illustrated in the figure below.
 
 !["Example"](./docs/assets/example-log.png)
 
