@@ -1,6 +1,6 @@
 /**
  * @file
- * @copyright Copyright (c) 2022.
+ * @copyright Copyright (c) 2022-2023.
  */
 
 #pragma once
@@ -19,9 +19,8 @@ public:
     /**
      * @brief Enumeration of the log levels.
      *
-     * The log level defines the level for the logger.
-     * For example, if the log level is setted to INFO, the levels below (WARNING, ERROR and FATAL) will be logged, but
-     * the levels above (DEBUG and VERBOSE) will not.
+     * The log level defines the level for the logger. For example, if the log level is setted to INFO, the levels above
+     * (WARNING, ERROR and FATAL) will be logged, but the levels below (DEBUG and VERBOSE) will not.
      */
     enum class LogLevel : uint8_t {
         /// No messages.
@@ -49,7 +48,7 @@ public:
      * @param ostream Output stream.
      * @param level Log level.
      */
-    explicit Logger(std::ostream& ostream, const LogLevel level = cLogLevelDefault);
+    explicit Logger(std::ostream& ostream, const LogLevel& level = cLogLevelDefault);
 
     /**
      * @brief Destructor.
@@ -61,7 +60,7 @@ public:
      *
      * @param level Log level.
      */
-    virtual void setLogLevel(const LogLevel level);
+    virtual void setLogLevel(const LogLevel& level);
 
     /**
      * @brief Get the log level.
@@ -119,7 +118,7 @@ private:
      * @param level Log level of the message.
      * @param msg Message to log.
      */
-    virtual void log(const std::string& level, const std::string& msg);
+    void log(const LogLevel& level, const std::string& msg);
 
     /**
      * @brief Get the current date and time.
@@ -128,13 +127,13 @@ private:
      *
      * @return String with the current date and time.
      */
-    virtual const std::string getDateTime() const;
+    std::string getDateTime() const;
 
 private:
     /// Output stream.
     std::ostream& mOstream;
     /// Log level.
-    LogLevel mLogLevel{cLogLevelDefault};
+    LogLevel mLogLevel;
 };
 
 } // namespace logger

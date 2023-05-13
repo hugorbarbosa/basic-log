@@ -1,6 +1,6 @@
 /**
  * @file
- * @copyright Copyright (c) 2022.
+ * @copyright Copyright (c) 2022-2023.
  */
 
 #pragma once
@@ -24,13 +24,13 @@ public:
      * @param ostream Output stream.
      * @param level Log level.
      */
-    explicit MockLogger(std::ostream& ostream, const LogLevel level = cLogLevelDefault)
+    explicit MockLogger(std::ostream& ostream, const LogLevel& level = cLogLevelDefault)
         : Logger(ostream, level)
     {
     }
 
     /// Mock method setLogLevel.
-    MOCK_METHOD(void, setLogLevel, (const LogLevel), (override));
+    MOCK_METHOD(void, setLogLevel, (const LogLevel&), (override));
     /// Mock method getLogLevel.
     MOCK_METHOD(LogLevel, getLogLevel, (), (const, override));
     /// Mock method logFatal.
