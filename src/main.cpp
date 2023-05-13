@@ -1,6 +1,6 @@
 /**
  * @file
- * @copyright Copyright (c) 2022.
+ * @copyright Copyright (c) 2022-2023.
  */
 
 #include <iostream>
@@ -17,18 +17,18 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[])
 {
     // Logger instance
-    const auto logger{std::make_unique<logger::Logger>(std::cout)};
+    logger::Logger logger{std::cout};
 
     // Log level
-    logger->setLogLevel(logger::Logger::LogLevel::VERBOSE);
+    logger.setLogLevel(logger::Logger::LogLevel::VERBOSE);
 
     // Messages with different log levels
-    logger->logFatal("Fatal message");
-    logger->logError("Error message");
-    logger->logWarning("Warning message");
-    logger->logInfo("Info message");
-    logger->logDebug("Debug message");
-    logger->logVerbose("Verbose message");
+    logger.logFatal("Fatal message");
+    logger.logError("Error message");
+    logger.logWarning("Warning message");
+    logger.logInfo("Info message");
+    logger.logDebug("Debug message");
+    logger.logVerbose("Verbose message");
 
-    return 0;
+    return EXIT_SUCCESS;
 }

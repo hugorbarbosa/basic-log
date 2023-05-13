@@ -23,21 +23,21 @@ This project is structured in the following directories:
 
 ## Features
 
-The logger of this project is a simple logger that allows to log messages during the execution of a program. This log uses a stream of type `std::ostream`, so the user can choose the output stream to log messages (console, file, ...).
+The logger of this project is a simple logger that allows to log messages during the execution of a program. This log uses a stream of type `std::ostream`, so the user can choose the output stream to log messages (console, file, etc).
 
 The logger features the following levels:
 
-- None: there's no logging (calling any method to log a message has no effect).
-- Fatal: logs only fatal messages.
-- Error: logs error messages and higher level messages (for example, if the logger is defined with this level, fatal messages are also logged but warning messages are ignored).
-- Warning: logs warnings messages and higher level messages.
-- Info: logs information messages and higher level messages.
-- Debug: logs debug messages and higher level messages.
-- Verbose: logs verbose messages and higher level messages.
+- *None*: there's no logging (calling any method to log a message has no effect).
+- *Fatal*: logs only fatal messages.
+- *Error*: logs error messages and higher level messages (for example, if the logger is defined with this level, fatal messages are also logged but warning messages are ignored).
+- *Warning*: logs warnings messages and higher level messages.
+- *Info*: logs information messages and higher level messages.
+- *Debug*: logs debug messages and higher level messages.
+- *Verbose*: logs verbose messages and higher level messages.
 
 The format of the output is the following:
 
-```sh
+```
 [YYYY-MM-DD HH:MM:SS][Level] Message
 ```
 
@@ -50,20 +50,20 @@ The logger is implemented [here](./src/logger/). An example of how to use it can
 int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[])
 {
     // Logger instance
-    const auto logger{std::make_unique<logger::Logger>(std::cout)};
+    logger::Logger logger{std::cout};
 
     // Log level
-    logger->setLogLevel(logger::Logger::LogLevel::VERBOSE);
+    logger.setLogLevel(logger::Logger::LogLevel::VERBOSE);
 
     // Messages with different log levels
-    logger->logFatal("Fatal message");
-    logger->logError("Error message");
-    logger->logWarning("Warning message");
-    logger->logInfo("Info message");
-    logger->logDebug("Debug message");
-    logger->logVerbose("Verbose message");
+    logger.logFatal("Fatal message");
+    logger.logError("Error message");
+    logger.logWarning("Warning message");
+    logger.logInfo("Info message");
+    logger.logDebug("Debug message");
+    logger.logVerbose("Verbose message");
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 ```
 
@@ -103,10 +103,10 @@ $ cmake --build . -j 4
 
 ## Running
 
-After compiling the project, an executable file is created and can be run using the following command (note that the executable may be located in a different directory, depending on the configuration generator):
+After compiling the project, an executable file is created and can be run using the following command (note that some configuration generators (e.g., Visual Studio) may add a configuration folder (e.g., Debug) in the path):
 
 ```sh
-$ ./src/Debug/SimpleLogger
+$ ./bin/<config>/SimpleLogger
 ```
 
 ## Tests

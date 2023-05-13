@@ -1,6 +1,6 @@
 /**
  * @file
- * @copyright Copyright (c) 2022.
+ * @copyright Copyright (c) 2022-2023.
  */
 
 #include "Logger.h"
@@ -20,28 +20,54 @@ namespace {
  * @param loggerLevel Logger level.
  * @param msgLevel Message level.
  *
- * @return True if message shall be logged.
- * @return False if message shall not be logged.
+ * @return True if the message shall be logged.
+ * @return False if the message shall not be logged.
  */
-bool shallLog(const Logger::LogLevel loggerLevel, const Logger::LogLevel msgLevel)
+bool shallLog(const Logger::LogLevel& loggerLevel, const Logger::LogLevel& msgLevel)
 {
-    if (loggerLevel >= msgLevel) {
-        return true;
+    return (loggerLevel >= msgLevel) ? true : false;
+}
+
+/**
+ * @brief Gets the log level as string.
+ *
+ * @param level Log level.
+ *
+ * @return Log level as string.
+ */
+std::string getLogLevelStr(const Logger::LogLevel& level)
+{
+    switch (level) {
+    case Logger::LogLevel::FATAL:
+        return "FATAL";
+    case Logger::LogLevel::ERROR:
+        return "ERROR";
+    case Logger::LogLevel::WARNING:
+        return "WARNING";
+    case Logger::LogLevel::INFO:
+        return "INFO";
+    case Logger::LogLevel::DEBUG:
+        return "DEBUG";
+    case Logger::LogLevel::VERBOSE:
+        return "VERBOSE";
+    case Logger::LogLevel::NONE:
+        // This level should not be logged
+    default:
+        return "";
     }
-    return false;
 }
 
 } // namespace
 
-Logger::Logger(std::ostream& ostream, const LogLevel level)
+Logger::Logger(std::ostream& ostream, const LogLevel& level)
     : mOstream{ostream}
-    , mLogLevel{std::move(level)}
+    , mLogLevel{level}
 {
 }
 
-void Logger::setLogLevel(const LogLevel level)
+void Logger::setLogLevel(const LogLevel& level)
 {
-    mLogLevel = std::move(level);
+    mLogLevel = level;
 }
 
 Logger::LogLevel Logger::getLogLevel() const
@@ -51,52 +77,43 @@ Logger::LogLevel Logger::getLogLevel() const
 
 void Logger::logFatal(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::FATAL)) {
-        log("FATAL", msg);
-    }
+    log(LogLevel::FATAL, msg);
 }
 
 void Logger::logError(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::ERROR)) {
-        log("ERROR", msg);
-    }
+    log(LogLevel::ERROR, msg);
 }
 
 void Logger::logWarning(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::WARNING)) {
-        log("WARNING", msg);
-    }
+    log(LogLevel::WARNING, msg);
 }
 
 void Logger::logInfo(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::INFO)) {
-        log("INFO", msg);
-    }
+    log(LogLevel::INFO, msg);
 }
 
 void Logger::logDebug(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::DEBUG)) {
-        log("DEBUG", msg);
-    }
+    log(LogLevel::DEBUG, msg);
 }
 
 void Logger::logVerbose(const std::string& msg)
 {
-    if (shallLog(mLogLevel, LogLevel::VERBOSE)) {
-        log("VERBOSE", msg);
+    log(LogLevel::VERBOSE, msg);
+}
+
+void Logger::log(const LogLevel& level, const std::string& msg)
+{
+    if (shallLog(mLogLevel, level)) {
+        mOstream << "[" << getDateTime() << "]"
+                 << "[" << getLogLevelStr(level) << "] " << msg << std::endl;
     }
 }
 
-void Logger::log(const std::string& level, const std::string& msg)
-{
-    mOstream << getDateTime() << "[" << level << "] " << msg << std::endl;
-}
-
-const std::string Logger::getDateTime() const
+std::string Logger::getDateTime() const
 {
     // Current point in time
     const auto now{std::chrono::system_clock::now()};
@@ -105,9 +122,7 @@ const std::string Logger::getDateTime() const
     const auto nowConv{std::chrono::system_clock::to_time_t(now)};
 
     std::stringstream ss{};
-    ss << "[";
     ss << std::put_time(std::localtime(&nowConv), "%Y-%m-%d %X");
-    ss << "]";
 
     return ss.str();
 }
