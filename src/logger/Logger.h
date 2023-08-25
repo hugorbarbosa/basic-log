@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include "ILogger.h"
 #include <ostream>
 
 namespace logger {
@@ -13,34 +13,11 @@ namespace logger {
 /**
  * @brief Simple logger.
  */
-class Logger
+class Logger : public ILogger
 {
 public:
-    /**
-     * @brief Enumeration of the log levels.
-     *
-     * The log level defines the level for the logger. For example, if the log level is setted to INFO, the levels above
-     * (WARNING, ERROR and FATAL) will be logged, but the levels below (DEBUG and VERBOSE) will not.
-     */
-    enum class LogLevel : uint8_t {
-        /// No messages.
-        NONE = 0,
-        /// Fatal message.
-        FATAL = 1,
-        /// Error message.
-        ERROR = 2,
-        /// Warning message.
-        WARNING = 3,
-        /// Information message.
-        INFO = 4,
-        /// Debug message.
-        DEBUG = 5,
-        /// Verbose message.
-        VERBOSE = 6
-    };
-
     /// Default log level.
-    static constexpr auto cLogLevelDefault{LogLevel::NONE};
+    static constexpr LogLevel cLogLevelDefault{LogLevel::NONE};
 
     /**
      * @brief Constructor.
@@ -51,65 +28,44 @@ public:
     explicit Logger(std::ostream& ostream, const LogLevel& level = cLogLevelDefault);
 
     /**
-     * @brief Destructor.
+     * @copydoc ILogger::setLogLevel
      */
-    virtual ~Logger() = default;
+    void setLogLevel(LogLevel&& level) noexcept override;
 
     /**
-     * @brief Set the log level.
-     *
-     * @param level Log level.
+     * @copydoc ILogger::getLogLevel
      */
-    virtual void setLogLevel(const LogLevel& level);
+    LogLevel getLogLevel() const noexcept override;
 
     /**
-     * @brief Get the log level.
-     *
-     * @return Log level.
+     * @copydoc ILogger::logFatal
      */
-    [[nodiscard]] virtual LogLevel getLogLevel() const;
+    void logFatal(const std::string& msg) const noexcept override;
 
     /**
-     * @brief Log a fatal message.
-     *
-     * @param msg Message to log.
+     * @copydoc ILogger::logError
      */
-    virtual void logFatal(const std::string& msg);
+    void logError(const std::string& msg) const noexcept override;
 
     /**
-     * @brief Log an error message.
-     *
-     * @param msg Message to log.
+     * @copydoc ILogger::logWarning
      */
-    virtual void logError(const std::string& msg);
+    void logWarning(const std::string& msg) const noexcept override;
 
     /**
-     * @brief Log a warning message.
-     *
-     * @param msg Message to log.
+     * @copydoc ILogger::logInfo
      */
-    virtual void logWarning(const std::string& msg);
+    void logInfo(const std::string& msg) const noexcept override;
 
     /**
-     * @brief Log an information message.
-     *
-     * @param msg Message to log.
+     * @copydoc ILogger::logDebug
      */
-    virtual void logInfo(const std::string& msg);
+    void logDebug(const std::string& msg) const noexcept override;
 
     /**
-     * @brief Log a debug message.
-     *
-     * @param msg Message to log.
+     * @copydoc ILogger::logVerbose
      */
-    virtual void logDebug(const std::string& msg);
-
-    /**
-     * @brief Log a verbose message.
-     *
-     * @param msg Message to log.
-     */
-    virtual void logVerbose(const std::string& msg);
+    void logVerbose(const std::string& msg) const noexcept override;
 
 private:
     /**
@@ -118,16 +74,7 @@ private:
      * @param level Log level of the message.
      * @param msg Message to log.
      */
-    void log(const LogLevel& level, const std::string& msg);
-
-    /**
-     * @brief Get the current date and time.
-     *
-     * Format of the output: YYYY-MM-DD HH:MM:SS.
-     *
-     * @return String with the current date and time.
-     */
-    std::string getDateTime() const;
+    void log(const LogLevel& level, const std::string& msg) const;
 
 private:
     /// Output stream.

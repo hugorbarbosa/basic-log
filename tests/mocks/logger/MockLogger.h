@@ -6,7 +6,7 @@
 #pragma once
 
 #include <gmock/gmock.h>
-#include <logger/Logger.h>
+#include <ILogger.h>
 
 namespace tests {
 namespace mocks {
@@ -15,36 +15,25 @@ namespace logger {
 /**
  * @brief Mock of Logger.
  */
-class MockLogger : public ::logger::Logger
+class MockLogger : public ::logger::ILogger
 {
 public:
-    /**
-     * @brief Constructor.
-     *
-     * @param ostream Output stream.
-     * @param level Log level.
-     */
-    explicit MockLogger(std::ostream& ostream, const LogLevel& level = cLogLevelDefault)
-        : Logger(ostream, level)
-    {
-    }
-
     /// Mock method setLogLevel.
-    MOCK_METHOD(void, setLogLevel, (const LogLevel&), (override));
+    MOCK_METHOD(void, setLogLevel, (LogLevel &&), (noexcept, override));
     /// Mock method getLogLevel.
-    MOCK_METHOD(LogLevel, getLogLevel, (), (const, override));
+    MOCK_METHOD(LogLevel, getLogLevel, (), (const, noexcept, override));
     /// Mock method logFatal.
-    MOCK_METHOD(void, logFatal, (const std::string&), (override));
+    MOCK_METHOD(void, logFatal, (const std::string&), (const, noexcept, override));
     /// Mock method logError.
-    MOCK_METHOD(void, logError, (const std::string&), (override));
+    MOCK_METHOD(void, logError, (const std::string&), (const, noexcept, override));
     /// Mock method logWarning.
-    MOCK_METHOD(void, logWarning, (const std::string&), (override));
+    MOCK_METHOD(void, logWarning, (const std::string&), (const, noexcept, override));
     /// Mock method logInfo.
-    MOCK_METHOD(void, logInfo, (const std::string&), (override));
+    MOCK_METHOD(void, logInfo, (const std::string&), (const, noexcept, override));
     /// Mock method logDebug.
-    MOCK_METHOD(void, logDebug, (const std::string&), (override));
+    MOCK_METHOD(void, logDebug, (const std::string&), (const, noexcept, override));
     /// Mock method logVerbose.
-    MOCK_METHOD(void, logVerbose, (const std::string&), (override));
+    MOCK_METHOD(void, logVerbose, (const std::string&), (const, noexcept, override));
 };
 
 } // namespace logger
