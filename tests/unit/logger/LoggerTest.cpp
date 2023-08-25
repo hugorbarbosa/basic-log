@@ -8,7 +8,7 @@
 #include <ctime>
 #include <gtest/gtest.h>
 #include <iomanip>
-#include <logger/Logger.h>
+#include <Logger.h>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -17,7 +17,7 @@ using namespace testing;
 using namespace logger;
 
 /**
- * @brief Test class of Logger.
+ * @brief Test suite of logger.
  */
 class LoggerTest
     : public Test
@@ -31,16 +31,6 @@ protected:
         : mLogger{std::make_unique<Logger>(mStream)}
     {
     }
-
-    /**
-     * @brief Test suite setup.
-     */
-    void SetUp() override {}
-
-    /**
-     * @brief Test suite teardown.
-     */
-    void TearDown() override {}
 
     /**
      * @brief Log a message.
@@ -70,7 +60,7 @@ protected:
     }
 
     /**
-     * @brief Gets the log level as string.
+     * @brief Get the log level as string.
      *
      * @param level Log level.
      *
@@ -99,24 +89,24 @@ protected:
     }
 
     /**
-     * @brief Gets the date and time from the last logged message.
+     * @brief Get the date and time from the last logged message.
      *
      * @return Date and time.
      */
-    std::string getDateTime()
+    auto getDateTime()
     {
         // Date time format in the log
         const std::string dateTime{"[YYYY-MM-DD HH:MM:SS]"};
         // Length of the substring that contains the date and time in the log
-        const auto dateTimeLength{dateTime.size()};
+        const auto dateTimeLength = dateTime.size();
         // Index of the message string where the date and time substring begins
-        constexpr auto dateTimeIndex{0};
+        constexpr auto dateTimeIndex = 0;
 
         return mStream.str().substr(dateTimeIndex, dateTimeLength);
     }
 
     /**
-     * @brief Builds the expected logged message, without date and time.
+     * @brief Build the expected logged message, without date and time.
      *
      * @param level Log level of the message.
      * @param dateTime Expected date and time of the logged message.
@@ -124,7 +114,7 @@ protected:
      *
      * @return Expected logged message.
      */
-    std::string expectLog(const Logger::LogLevel& level, const std::string& dateTime, const std::string& msg)
+    auto expectLog(const Logger::LogLevel& level, const std::string& dateTime, const std::string& msg)
     {
         std::stringstream ss;
         ss << dateTime << "[" << getLogLevelStr(level) << "] " << msg << std::endl;
@@ -152,10 +142,12 @@ TEST_F(LoggerTest, SetLogLevel)
  */
 TEST_P(LoggerTest, LogMessage)
 {
-    const auto level{GetParam()};
+    const auto level = GetParam();
 
     // Set logger level
-    mLogger->setLogLevel(level);
+    auto levelCopy = level;
+    mLogger->setLogLevel(std::move(levelCopy));
+    ASSERT_EQ(mLogger->getLogLevel(), level);
 
     // Log a message
     const std::string msg{"A message"};
@@ -171,19 +163,19 @@ TEST_P(LoggerTest, LogMessage)
  */
 TEST_P(LoggerTest, DoNotLogMessage)
 {
-    const auto messageLevel{GetParam()};
+    const auto messageLevel = GetParam();
     assert(messageLevel != Logger::LogLevel::NONE);
 
     // Set logger level to the previous level of the message
-    const Logger::LogLevel loggerLevel{
-        static_cast<Logger::LogLevel>(static_cast<std::underlying_type_t<Logger::LogLevel>>(messageLevel) - 1)};
-    mLogger->setLogLevel(loggerLevel);
+    auto loggerLevel
+        = static_cast<Logger::LogLevel>(static_cast<std::underlying_type_t<Logger::LogLevel>>(messageLevel) - 1);
+    mLogger->setLogLevel(std::move(loggerLevel));
 
     // Log a message
     const std::string msg{"A message"};
     log(messageLevel, msg);
 
-    // Expected no logged message
+    // Expect no logged message
     EXPECT_TRUE(mStream.str().empty());
 }
 
