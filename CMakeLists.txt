@@ -1,66 +1,71 @@
 # ----------------------------------------------------------------------------
 # Project setup
-
+# ----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.16)
 
-project(SimpleLogger
+project(basic_log
     VERSION 1.0.0
     LANGUAGES CXX
+    DESCRIPTION "Basic logging library."
 )
+
+set(BASICLOG_PROJECT_NAME ${PROJECT_NAME})
+set(BASICLOG_PROJECT_VERSION ${PROJECT_VERSION})
+
+set(MAIN_PROJECT OFF)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(MAIN_PROJECT ON)
+endif()
 
 # ----------------------------------------------------------------------------
 # Configuration options
-
-# Option to build unit tests
-option(BUILD_TESTS "Build unit tests" OFF)
+# ----------------------------------------------------------------------------
+option(BASICLOG_BUILD_TESTS "Build tests" ${MAIN_PROJECT})
+option(BASICLOG_BUILD_EXAMPLES "Build examples" ${MAIN_PROJECT})
 
 # ----------------------------------------------------------------------------
 # CMake options
-
-# Build type on single-configuration generators (e.g. Makefile generators or Ninja).
-# Set default build type if build type not set.
-if (NOT CMAKE_BUILD_TYPE)
+# ----------------------------------------------------------------------------
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 # ----------------------------------------------------------------------------
 # Dependencies
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-# Fetch dependencies
+# ----------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 include(FetchDependencies)
 
 # ----------------------------------------------------------------------------
 # Build
-
-# C++ standard
+# ----------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 
-# Compiler options
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # GCC compiler options
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # MSVC compiler options
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
-endif()
+include(CompilerOptions)
+set_compiler_options()
 
-# Subdirectories
+add_subdirectory(include)
 add_subdirectory(src)
-if (BUILD_TESTS)
+
+if(BASICLOG_BUILD_TESTS)
     include(CTest)
     include(GoogleTest)
     enable_testing()
-    add_subdirectory(tests)
+    add_subdirectory(test)
+endif()
+
+if(BASICLOG_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
 # ----------------------------------------------------------------------------
 # Status
+# ----------------------------------------------------------------------------
 message(STATUS)
-message(STATUS "${PROJECT_NAME} configuration:")
+message(STATUS "${BASICLOG_PROJECT_NAME} ${BASICLOG_PROJECT_VERSION} configuration:")
 message(STATUS "- CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 message(STATUS "- CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "- CMAKE_CXX_STANDARD = ${CMAKE_CXX_STANDARD}")
-message(STATUS "- BUILD_TESTS = ${BUILD_TESTS}")
+message(STATUS "- BASICLOG_BUILD_TESTS = ${BASICLOG_BUILD_TESTS}")
+message(STATUS "- BASICLOG_BUILD_EXAMPLES = ${BASICLOG_BUILD_EXAMPLES}")
 message(STATUS)

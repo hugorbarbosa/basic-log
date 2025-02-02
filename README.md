@@ -1,92 +1,121 @@
-# C++ logger
+# basic-log
 
-A simple logger implemented in C++.
+A basic C++ logging library, based on the `std::ostream` of the C++ Standard Library.
+
+**Note:** If you are looking for a feature-rich and more tested library, please do not use this library. It was developed only as part of my studies.
 
 ## Table of contents
 
-- [Project structure](#project-structure)
 - [Features](#features)
-- [Requirements](#requirements)
+- [Examples](#examples)
+- [Integration](#integration)
+- [Supported compilers](#supported-compilers)
 - [Compilation](#compilation)
-- [Running](#running)
+- [Running the examples](#running-the-examples)
 - [Tests](#tests)
 - [License](#license)
 
-## Project structure
-
-This project is structured in the following directories:
-
-- `cmake`: useful CMake files.
-- `docs`: project documentation.
-- `src`: source code of the project.
-- `tests`: files related with tests.
-
 ## Features
 
-The logger of this project is a simple logger that allows to log messages during the execution of a program. This log uses a stream of type `std::ostream`, so the user can choose the output stream to log messages (console, file, etc).
+This library is a very basic facility that allows logging of messages during the execution of a program. The following are the features provided by this library:
 
-The logger features the following levels:
+- Since it is based on the `std::ostream`, the user can easily choose the output stream to log messages: console, file, etc.
+- Provides the following logging levels:
+    - *None*: no logging (calling any function to log a message has no effect).
+    - *Fatal*: logs only fatal messages.
+    - *Error*: logs error messages and higher level messages (only error and fatal messages are logged in this case).
+    - *Warning*: logs warnings messages and higher level messages.
+    - *Info*: logs information messages and higher level messages.
+    - *Debug*: logs debug messages and higher level messages.
+    - *Verbose*: logs verbose messages and higher level messages.
+- Format of the output is `[index][YYYY-MM-DD HH:MM:SS.MMM][level][Tn] Message`, where:
+    - `index`: message index (counter).
+    - `YYYY-MM-DD HH:MM:SS.MMM`: date and time.
+    - `level`: logging level of the message.
+    - `Tn`: thread ID of the thread from which the message was logged (e.g., `T42`).
+    - `Message`: logged message.
 
-- *None*: there's no logging (calling any method to log a message has no effect).
-- *Fatal*: logs only fatal messages.
-- *Error*: logs error messages and higher level messages (for example, if the logger is defined with this level, fatal messages are also logged but warning messages are ignored).
-- *Warning*: logs warnings messages and higher level messages.
-- *Info*: logs information messages and higher level messages.
-- *Debug*: logs debug messages and higher level messages.
-- *Verbose*: logs verbose messages and higher level messages.
+## Examples
 
-The format of the output is the following:
+The following is an example of how to log messages using this logging library. In this case, messages are directed to the standard output stream.
 
-```
-[YYYY-MM-DD HH:MM:SS][Level] Message
-```
-
-The logger is implemented [here](./src/logger/). An example of how to use it can be seen in the following code snippet (extracted from [here](./src/main.cpp)).
-
-```C++
+```c++
+#include <basic_log/basic_logger.h>
 #include <iostream>
-#include <Logger.h>
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[])
+int main()
 {
-   using namespace logger;
+    // Basic logger instance that uses the standard output stream.
+    basic_log::BasicLogger logger{std::cout};
 
-    // Logger instance
-    std::unique_ptr<ILogger> logger{std::make_unique<Logger>(std::cout)};
+    logger.set_log_level(basic_log::LogLevel::verbose);
 
-    // Log level
-    logger->setLogLevel(ILogger::LogLevel::VERBOSE);
-
-    // Messages with different log levels
-    logger->logFatal("Fatal message");
-    logger->logError("Error message");
-    logger->logWarning("Warning message");
-    logger->logInfo("Info message");
-    logger->logDebug("Debug message");
-    logger->logVerbose("Verbose message");
+    logger.fatal("Fatal message");
+    logger.error("Error message");
+    logger.warning("Warning message");
+    logger.info("Info message");
+    logger.debug("Debug message");
+    logger.verbose("Verbose message");
 
     return EXIT_SUCCESS;
 }
 ```
 
-This example uses `std::cout` as output stream, and its result is illustrated in the figure below.
+The console will have similar messages to the following ones when running this example:
 
-!["Example"](./docs/assets/example-log.png)
+```sh
+[1][2025-01-01 09:10:11.234][fatal][T42] Fatal message
+[2][2025-01-01 09:10:11.236][error][T42] Error message
+[3][2025-01-01 09:10:11.238][warning][T42] Warning message
+[4][2025-01-01 09:10:11.240][info][T42] Info message
+[5][2025-01-01 09:10:11.242][debug][T42] Debug message
+[6][2025-01-01 09:10:11.244][verbose][T42] Verbose message
+```
 
-## Requirements
+For more usage examples, please explore the [examples](./examples) directory.
 
-Necessary tools:
+## Integration
 
-- CMake: system to manage the build process.
-- C++ compiler: for software compilation.
+This library creates a CMake target that can be linked in your project, and there are many ways to make this library available to be used in your project.
+
+### Using CMake `FetchContent` module
+
+CMake `FetchContent` module can be used to automatically download this library as a dependency when configuring your project. For that, you just need to place this code in your `CMakeLists.txt` file:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    basiclog
+    GIT_REPOSITORY https://github.com/hugorbarbosa/basic-log
+    GIT_TAG main # Or a commit hash if you prefer
+)
+FetchContent_MakeAvailable(basiclog)
+# ...
+target_link_libraries(your-target PRIVATE basic_log::basic_log)
+```
+
+### Copying the entire project
+
+You can copy the entire project source tree into your project, and in your `CMakeLists.txt` file:
+
+```cmake
+add_subdirectory(basic-log)
+# ...
+target_link_libraries(your-target PRIVATE basic_log::basic_log)
+```
+
+### Using as `git submodule`
+
+You can also use this library as a `git submodule` in your project. For this case, the CMake code needed is the same as the one demonstrated if this entire project was copied into your project.
+
+## Supported compilers
+
+This project can be successfully compiled using the following compilers (it might also compile using other):
+
+- GCC 9.4.0
+- Microsoft Visual C++ 2022 / Build Tools 19.41.34123
 
 ## Compilation
-
-The CMake options for configuration of this project are:
-
-| CMake option | Description | Default value |
-| --- | --- | --- |
-| BUILD_TESTS | Build unit tests | OFF |
 
 The following commands can be utilized to configure the project (example for Debug configuration):
 
@@ -97,30 +126,36 @@ $ cd build-debug
 $ cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
 
-To compile the software, use the following command:
+To compile the software, you can use the CMake build command:
 
 ```sh
-$ cmake --build . -j 4
+$ cmake --build . -j 8
 ```
 
-## Running
+## Running the examples
+
+If you want to run the examples of how to use this library, it is necessary to configure the project as follows:
+
+```sh
+$ cd build-debug
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBASICLOG_BUILD_EXAMPLES=ON
+$ cmake --build . -j 8
+```
 
 After compiling the project, an executable file is created and can be run using the following command (note that some configuration generators (e.g., Visual Studio) may add a configuration folder (e.g., Debug) in the path):
 
 ```sh
-$ ./bin/<config>/SimpleLogger
+$ ./bin/<config>/basic-log-example
 ```
 
 ## Tests
 
-To run the unit tests, use the commands below (note that it is necessary to configure CMake with `BUILD_TESTS` option to ON):
+To run the unit tests, use the commands below:
 
 ```sh
-$ cd <project-directory>
-$ mkdir build-debug
 $ cd build-debug
-$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON
-$ cmake --build . -j 4
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBASICLOG_BUILD_TESTS=ON
+$ cmake --build . -j 8
 $ ctest
 ```
 
