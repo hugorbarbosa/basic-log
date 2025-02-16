@@ -3,8 +3,8 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#ifndef BASIC_LOG_LOG_LEVEL_H
-#define BASIC_LOG_LOG_LEVEL_H
+#ifndef BASIC_LOG_LOG_LEVEL_HPP
+#define BASIC_LOG_LOG_LEVEL_HPP
 
 #include <cstdint>
 
@@ -36,4 +36,4 @@ enum class LogLevel : std::uint8_t {
 
 } // namespace basic_log
 
-#endif // BASIC_LOG_LOG_LEVEL_H
+#endif // BASIC_LOG_LOG_LEVEL_HPP

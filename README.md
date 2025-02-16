@@ -1,6 +1,6 @@
 # basic-log
 
-A basic C++ logging library, based on the `std::ostream` of the C++ Standard Library.
+A basic C++20 logging library, based on the `std::ostream` of the C++ Standard Library.
 
 **Note:** If you are looking for a feature-rich and more tested library, please do not use this library. It was developed only as part of my studies.
 
@@ -40,7 +40,7 @@ This library is a very basic facility that allows logging of messages during the
 The following is an example of how to log messages using this logging library. In this case, messages are directed to the standard output stream.
 
 ```c++
-#include <basic_log/basic_logger.h>
+#include <basic_log/basic_logger.hpp>
 #include <iostream>
 
 int main()

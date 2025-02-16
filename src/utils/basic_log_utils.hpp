@@ -3,10 +3,10 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#ifndef BASIC_LOG_UTILS_H
-#define BASIC_LOG_UTILS_H
+#ifndef BASIC_LOG_UTILS_HPP
+#define BASIC_LOG_UTILS_HPP
 
-#include <basic_log/log_level.h>
+#include <basic_log/log_level.hpp>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
@@ -78,4 +78,4 @@ inline std::string get_date_time() noexcept
 
 } // namespace basic_log
 
-#endif // BASIC_LOG_UTILS_H
+#endif // BASIC_LOG_UTILS_HPP

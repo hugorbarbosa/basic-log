@@ -3,8 +3,8 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#include <basic_log/basic_logger.h>
-#include <basic_log_utils.h>
+#include <basic_log/basic_logger.hpp>
+#include <basic_log_utils.hpp>
 #include <thread>
 
 namespace basic_log {

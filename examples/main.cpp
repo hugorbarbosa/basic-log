@@ -3,7 +3,7 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#include <basic_log/basic_logger.h>
+#include <basic_log/basic_logger.hpp>
 #include <iostream>
 
 /**

@@ -3,9 +3,9 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#include <basic_log/basic_logger.h>
-#include <basic_log_utils.h>
 #include <gtest/gtest.h>
+#include <basic_log/basic_logger.hpp>
+#include <basic_log_utils.hpp>
 
 using namespace testing;
 using namespace basic_log;

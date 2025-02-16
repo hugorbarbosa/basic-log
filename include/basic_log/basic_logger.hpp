@@ -3,13 +3,13 @@
  * @copyright Copyright (C) 2025 Hugo Barbosa.
  */
 
-#ifndef BASIC_LOG_BASIC_LOGGER_H
-#define BASIC_LOG_BASIC_LOGGER_H
+#ifndef BASIC_LOG_BASIC_LOGGER_HPP
+#define BASIC_LOG_BASIC_LOGGER_HPP
 
 #include <atomic>
 #include <mutex>
 #include <string>
-#include "log_level.h"
+#include "log_level.hpp"
 
 namespace basic_log {
 
@@ -115,4 +115,4 @@ private:
 
 } // namespace basic_log
 
-#endif // BASIC_LOG_BASIC_LOGGER_H
+#endif // BASIC_LOG_BASIC_LOGGER_HPP
