@@ -110,7 +110,7 @@ You can also use this library as a `git submodule` in your project. For this cas
 
 ## Supported compilers
 
-This project can be successfully compiled using the following compilers (it might also compile using other):
+This project can be successfully compiled using the following compilers (it might also succeed using another compiler):
 
 - GCC 9.4.0
 - Microsoft Visual C++ 2022 / Build Tools 19.41.34123

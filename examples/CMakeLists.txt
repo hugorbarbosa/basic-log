@@ -1,7 +1,7 @@
 project(basic-log-example)
 
 add_executable(${PROJECT_NAME}
-    main.cpp
+    examples.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
