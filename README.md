@@ -2,8 +2,6 @@
 
 A basic C++20 logging library, based on the `std::ostream` of the C++ Standard Library.
 
-**Note:** If you are looking for a feature-rich and more tested library, please do not use this library. It was developed only as part of my studies.
-
 ## Table of contents
 
 - [Features](#features)
@@ -34,6 +32,8 @@ This library is a very basic facility that allows logging of messages during the
     - `level`: logging level of the message.
     - `Tn`: thread ID of the thread from which the message was logged (e.g., `T42`).
     - `Message`: logged message.
+
+**Note:** If you are looking for a feature-rich and more tested library, this probably won't be the most suitable library for your needs. It was developed only as part of my studies.
 
 ## Examples
 
