@@ -134,6 +134,7 @@ INSTANTIATE_TEST_SUITE_P(LoggingLevel,
 TEST_F(UtBasicLogger, DefaultLogLevelIsDefined)
 {
     EXPECT_EQ(basic_logger.get_log_level(), BasicLogger::default_log_level);
+    EXPECT_TRUE(false);
 }
 
 /**
