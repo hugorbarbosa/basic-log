@@ -6,20 +6,48 @@
 #include <gtest/gtest.h>
 #include <basic_log/basic_logger.hpp>
 #include <basic_log_utils.hpp>
+#include <thread>
 
-using namespace testing;
-using namespace basic_log;
+using basic_log::BasicLogger;
+using basic_log::LogLevel;
+
+namespace {
 
 /**
- * @brief Unit testing of basic logger.
+ * @brief Get the expected logged message.
+ *
+ * @param msg Expected message.
+ * @param level Expected logging level of the message.
+ * @param index Expected index of the message.
+ * @param date_time Expected date and time of the message.
+ * @param thread_id Expected thread ID of the message.
+ *
+ * @return Expected logged message.
  */
-class UtBasicLogger : public Test {
+auto get_expected_log(const std::string& msg,
+                      const LogLevel level,
+                      const std::uint16_t index,
+                      const std::string& date_time,
+                      const std::thread::id& thread_id)
+{
+    std::stringstream ss;
+    ss << "[" << index << "]" << "[" << date_time << "]" << "[" << get_log_level_str(level) << "]"
+       << "[T" << thread_id << "] " << msg << "\n";
+    return ss;
+}
+
+} // namespace
+
+/**
+ * @brief Unit testing suite of basic logger.
+ */
+class UtBasicLogger : public testing::Test {
 protected:
     /**
      * @brief Constructor.
      */
     UtBasicLogger() noexcept
-        : basic_logger{stream}
+        : basic_logger{string_stream}
     {
     }
 
@@ -34,16 +62,22 @@ protected:
         switch (level) {
         case LogLevel::fatal:
             basic_logger.fatal(msg);
+            break;
         case LogLevel::error:
             basic_logger.error(msg);
+            break;
         case LogLevel::warning:
             basic_logger.warning(msg);
+            break;
         case LogLevel::info:
             basic_logger.info(msg);
+            break;
         case LogLevel::debug:
             basic_logger.debug(msg);
+            break;
         case LogLevel::verbose:
             basic_logger.verbose(msg);
+            break;
         case LogLevel::none:
         default:
             break;
@@ -57,41 +91,22 @@ protected:
      */
     auto extract_date_time() const noexcept
     {
-        const auto date_time = get_date_time();
+        const auto date_time = basic_log::get_date_time();
         const auto size = date_time.size();
         constexpr auto substring_index = 4;
-        return stream.str().substr(substring_index, size);
+        return string_stream.str().substr(substring_index, size);
     }
 
-    /**
-     * @brief Get the expected logged message.
-     *
-     * @param msg Expected message.
-     * @param level Expected logging level of the message.
-     * @param index Expected index of the message.
-     * @param date_time Expected date and time of the message.
-     * @param thread_id Expected thread ID of the message.
-     *
-     * @return Expected logged message.
-     */
-    auto get_expected_log(const std::string& msg,
-                          const LogLevel level,
-                          const std::uint16_t index,
-                          const std::string& date_time,
-                          const std::thread::id& thread_id) const noexcept
-    {
-        std::stringstream ss;
-        ss << "[" << index << "]"
-           << "[" << date_time << "]"
-           << "[" << get_log_level_str(level) << "]"
-           << "[T" << thread_id << "] " << msg << std::endl;
-        return ss;
-    }
-
+    /// Logger stream.
+    // Clang-tidy suppression.
+    // Rationale: Test fixtures are meant to expose data to the test cases.
+    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
+    std::ostringstream string_stream;
     /// Basic logger under testing.
+    // Clang-tidy suppression.
+    // Rationale: Test fixtures are meant to expose data to the test cases.
+    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
     BasicLogger basic_logger;
-    //// Logger stream.
-    std::ostringstream stream;
 };
 
 /**
@@ -99,20 +114,19 @@ protected:
  */
 class ParamTestBasicLogger
     : public UtBasicLogger
-    , public WithParamInterface<LogLevel> {
-};
+    , public testing::WithParamInterface<LogLevel> {};
 
 /**
  * @brief Instantiation of the parameterized test fixture.
  */
 INSTANTIATE_TEST_SUITE_P(LoggingLevel,
                          ParamTestBasicLogger,
-                         Values(LogLevel::fatal,
-                                LogLevel::error,
-                                LogLevel::warning,
-                                LogLevel::info,
-                                LogLevel::debug,
-                                LogLevel::verbose));
+                         testing::Values(LogLevel::fatal,
+                                         LogLevel::error,
+                                         LogLevel::warning,
+                                         LogLevel::info,
+                                         LogLevel::debug,
+                                         LogLevel::verbose));
 
 /**
  * @brief Test that the default logging level is correctly defined.
@@ -148,7 +162,7 @@ TEST_P(ParamTestBasicLogger, LoggedMessageHasCorrectFormat)
     const auto& thread_id = std::this_thread::get_id();
     const auto expected_message
         = get_expected_log(msg, log_level, message_index, extract_date_time(), thread_id);
-    EXPECT_EQ(stream.str(), expected_message.str());
+    EXPECT_EQ(string_stream.str(), expected_message.str());
 }
 
 /**
@@ -168,7 +182,7 @@ TEST_P(ParamTestBasicLogger, MessageIsNotLoggedDueToLogLevel)
     log(message_level, msg);
 
     // No message should be logged.
-    EXPECT_TRUE(stream.str().empty());
+    EXPECT_TRUE(string_stream.str().empty());
 }
 
 /**
@@ -195,11 +209,11 @@ TEST_P(ParamTestBasicLogger, MessageIndexIsIncremented)
                                                                    {++expected_index, "Message 4"}};
     for (const auto& message_pair : messages) {
         const auto& msg = message_pair.second;
-        clear_stream(stream);
+        clear_stream(string_stream);
         log(log_level, msg);
 
         const auto expected_message
             = get_expected_log(msg, log_level, message_pair.first, extract_date_time(), thread_id);
-        EXPECT_EQ(stream.str(), expected_message.str());
+        EXPECT_EQ(string_stream.str(), expected_message.str());
     }
 }

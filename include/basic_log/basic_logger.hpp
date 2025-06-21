@@ -95,13 +95,13 @@ private:
     void log(const LogLevel level, const std::string& msg) noexcept;
 
     /**
-     * @brief Check if the message should be logged, dependent of the current logging level defined.
+     * @brief Check if the message shall be logged, considering the current logging level defined.
      *
      * @param msg_level Message level to check.
      *
      * @return True if the message should be logged, false otherwise.
      */
-    bool should_log(const LogLevel msg_level) const noexcept;
+    bool shall_log(const LogLevel msg_level) const noexcept;
 
     /// Output stream.
     std::ostream& out_stream;
