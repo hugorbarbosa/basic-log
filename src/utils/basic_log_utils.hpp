@@ -22,7 +22,7 @@ namespace basic_log {
  *
  * @return Logging level as string.
  */
-inline constexpr std::string_view get_log_level_str(const LogLevel level) noexcept
+constexpr std::string_view get_log_level_str(const LogLevel level) noexcept
 {
     switch (level) {
     case LogLevel::fatal:
@@ -50,18 +50,19 @@ inline constexpr std::string_view get_log_level_str(const LogLevel level) noexce
  */
 inline std::string get_date_time() noexcept
 {
-    using namespace std::chrono;
-    const auto now = current_zone()->to_local(system_clock::now());
+    const auto now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
 
     // Get a local time_point with days precision.
-    const auto ld = floor<days>(now);
+    const auto days = std::chrono::floor<std::chrono::days>(now);
 
     // Convert local days precision time_point to a local {y, m, d} calendar.
-    const year_month_day ymd{ld};
+    const std::chrono::year_month_day ymd{days};
 
     // Split time since local midnight into {h, m, s, subseconds}.
-    const hh_mm_ss hms{now - ld};
-    const auto ms = duration_cast<milliseconds>(now.time_since_epoch()).count() % 1000;
+    const std::chrono::hh_mm_ss hms{now - days};
+    const auto ms
+        = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
+          % 1000;
 
     // Format the date and time.
     std::stringstream ss;

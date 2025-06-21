@@ -8,5 +8,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    INTERFACE ${BASICLOG_PROJECT_NAME}::compile_options
     INTERFACE ${BASICLOG_PROJECT_NAME}::basic_log_api
 )

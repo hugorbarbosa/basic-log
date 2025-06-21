@@ -57,16 +57,16 @@ void BasicLogger::verbose(const std::string& msg) noexcept
 
 void BasicLogger::log(const LogLevel level, const std::string& msg) noexcept
 {
-    if (should_log(level)) {
+    if (shall_log(level)) {
         const std::lock_guard<std::mutex> lock(stream_mutex);
-        out_stream << "[" << ++message_index << "]"
-                   << "[" << get_date_time() << "]"
-                   << "[" << get_log_level_str(level) << "]"
-                   << "[T" << std::this_thread::get_id() << "] " << msg << std::endl;
+        out_stream << "[" << ++message_index << "]" << "[" << get_date_time() << "]" << "["
+                   << get_log_level_str(level) << "]" << "[T" << std::this_thread::get_id() << "] "
+                   << msg << "\n"
+                   << std::flush;
     }
 }
 
-bool BasicLogger::should_log(const LogLevel msg_level) const noexcept
+bool BasicLogger::shall_log(const LogLevel msg_level) const noexcept
 {
     return log_level >= msg_level;
 }

@@ -2,7 +2,10 @@
 .vscode/
 
 # Build files
-*build*/
+*build*/*
+
+# CMake
+CMakeUserPresets.json
 
 # Prerequisites
 *.d
