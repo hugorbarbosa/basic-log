@@ -110,7 +110,7 @@ if(BASICLOG_ENABLE_COVERAGE)
     set(MIN_LINE_COVERAGE 90)
     set(MIN_FUNCTION_COVERAGE 80)
     set(COVERAGE_JOBS 4)
-    set(COVERAGE_CHECK_SCRIPT "${SCRIPTS_DIR}/coverage-report-checker.sh")
+    set(COVERAGE_CHECK_SCRIPT "${SCRIPTS_DIR}/coverage_report_checker.sh")
     enable_coverage(
         ${PROJECT_COMPILER_OPTIONS_LIBRARY}
         "${COVERAGE_EXCLUDE_PATTERNS}"
