@@ -17,7 +17,7 @@ void console_log_example() noexcept
     console_logger.set_log_level(basic_log::LogLevel::verbose);
 
     console_logger.fatal("This is a fatal message");
-    console_logger.error("This is an error message");
+    console_logger.error("Error message");
     console_logger.warning("Warning message is here!");
     console_logger.info("This is a message to inform something");
     console_logger.debug("A message for debugging purposes");
@@ -48,7 +48,7 @@ void console_log_example() noexcept
 int main()
 {
     console_log_example();
-    // TODO: Add example that logs messages to a file.
+    // TODO(HB): Add example that logs messages to a file.
 
     return EXIT_SUCCESS;
 }

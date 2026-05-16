@@ -38,9 +38,10 @@ constexpr std::string_view get_log_level_str(const LogLevel level) noexcept
     case LogLevel::verbose:
         return "verbose";
     case LogLevel::none:
-    default:
-        return "";
+        return "none";
     }
+
+    return "unknown";
 }
 
 /**

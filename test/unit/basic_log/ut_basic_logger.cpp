@@ -24,11 +24,11 @@ namespace {
  *
  * @return Expected logged message.
  */
-auto get_expected_log(const std::string& msg,
-                      const LogLevel level,
-                      const std::uint16_t index,
-                      const std::string& date_time,
-                      const std::thread::id& thread_id)
+std::stringstream get_expected_log(const std::string& msg,
+                                   const LogLevel level,
+                                   const std::uint16_t index,
+                                   const std::string& date_time,
+                                   const std::thread::id& thread_id)
 {
     std::stringstream ss;
     ss << "[" << index << "]" << "[" << date_time << "]" << "[" << get_log_level_str(level) << "]"
@@ -47,7 +47,7 @@ protected:
      * @brief Constructor.
      */
     UtBasicLogger() noexcept
-        : basic_logger{string_stream}
+        : logger_{string_stream_}
     {
     }
 
@@ -61,25 +61,24 @@ protected:
     {
         switch (level) {
         case LogLevel::fatal:
-            basic_logger.fatal(msg);
+            logger_.fatal(msg);
             break;
         case LogLevel::error:
-            basic_logger.error(msg);
+            logger_.error(msg);
             break;
         case LogLevel::warning:
-            basic_logger.warning(msg);
+            logger_.warning(msg);
             break;
         case LogLevel::info:
-            basic_logger.info(msg);
+            logger_.info(msg);
             break;
         case LogLevel::debug:
-            basic_logger.debug(msg);
+            logger_.debug(msg);
             break;
         case LogLevel::verbose:
-            basic_logger.verbose(msg);
+            logger_.verbose(msg);
             break;
         case LogLevel::none:
-        default:
             break;
         }
     }
@@ -89,24 +88,24 @@ protected:
      *
      * @return Date and time.
      */
-    auto extract_date_time() const noexcept
+    std::string extract_date_time() const noexcept
     {
         const auto date_time = basic_log::get_date_time();
         const auto size = date_time.size();
         constexpr auto substring_index = 4;
-        return string_stream.str().substr(substring_index, size);
+        return string_stream_.str().substr(substring_index, size);
     }
 
+    // Clang-tidy suppression.
+    // Rationale: Test fixtures are meant to expose data to the test cases.
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     /// Logger stream.
-    // Clang-tidy suppression.
-    // Rationale: Test fixtures are meant to expose data to the test cases.
-    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
-    std::ostringstream string_stream;
+    std::ostringstream string_stream_;
     /// Basic logger under testing.
-    // Clang-tidy suppression.
-    // Rationale: Test fixtures are meant to expose data to the test cases.
-    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
-    BasicLogger basic_logger;
+    BasicLogger logger_;
+
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 };
 
 /**
@@ -119,7 +118,7 @@ class ParamTestBasicLogger
 /**
  * @brief Instantiation of the parameterized test fixture.
  */
-INSTANTIATE_TEST_SUITE_P(LoggingLevel,
+INSTANTIATE_TEST_SUITE_P(UtBasicLogger,
                          ParamTestBasicLogger,
                          testing::Values(LogLevel::fatal,
                                          LogLevel::error,
@@ -133,17 +132,17 @@ INSTANTIATE_TEST_SUITE_P(LoggingLevel,
  */
 TEST_F(UtBasicLogger, DefaultLogLevelIsDefined)
 {
-    EXPECT_EQ(basic_logger.get_log_level(), BasicLogger::default_log_level);
+    EXPECT_EQ(logger_.get_log_level(), BasicLogger::default_log_level);
 }
 
 /**
  * @brief Test that the logging level is correctly defined.
  */
-TEST_P(ParamTestBasicLogger, LogLevelIsSet)
+TEST_P(ParamTestBasicLogger, LogLevelIsCorrectlyDefined)
 {
     const auto log_level = GetParam();
-    basic_logger.set_log_level(log_level);
-    EXPECT_EQ(basic_logger.get_log_level(), log_level);
+    logger_.set_log_level(log_level);
+    EXPECT_EQ(logger_.get_log_level(), log_level);
 }
 
 /**
@@ -153,7 +152,7 @@ TEST_P(ParamTestBasicLogger, LoggedMessageHasCorrectFormat)
 {
     const auto log_level = GetParam();
 
-    basic_logger.set_log_level(log_level);
+    logger_.set_log_level(log_level);
 
     constexpr auto msg = "A message";
     log(log_level, msg);
@@ -162,7 +161,7 @@ TEST_P(ParamTestBasicLogger, LoggedMessageHasCorrectFormat)
     const auto& thread_id = std::this_thread::get_id();
     const auto expected_message
         = get_expected_log(msg, log_level, message_index, extract_date_time(), thread_id);
-    EXPECT_EQ(string_stream.str(), expected_message.str());
+    EXPECT_EQ(string_stream_.str(), expected_message.str());
 }
 
 /**
@@ -176,13 +175,13 @@ TEST_P(ParamTestBasicLogger, MessageIsNotLoggedDueToLogLevel)
 
     const auto previous_level
         = static_cast<LogLevel>(static_cast<std::underlying_type_t<LogLevel>>(message_level) - 1);
-    basic_logger.set_log_level(previous_level);
+    logger_.set_log_level(previous_level);
 
     constexpr auto msg = "A message";
     log(message_level, msg);
 
     // No message should be logged.
-    EXPECT_TRUE(string_stream.str().empty());
+    EXPECT_TRUE(string_stream_.str().empty());
 }
 
 /**
@@ -192,10 +191,9 @@ TEST_P(ParamTestBasicLogger, MessageIndexIsIncremented)
 {
     const auto log_level = GetParam();
 
-    basic_logger.set_log_level(log_level);
+    logger_.set_log_level(log_level);
 
     constexpr auto clear_stream = [](auto& stream) {
-        // Reset the internal string.
         stream.str("");
         // Clear any error flag.
         stream.clear();
@@ -209,11 +207,11 @@ TEST_P(ParamTestBasicLogger, MessageIndexIsIncremented)
                                                                    {++expected_index, "Message 4"}};
     for (const auto& message_pair : messages) {
         const auto& msg = message_pair.second;
-        clear_stream(string_stream);
+        clear_stream(string_stream_);
         log(log_level, msg);
 
         const auto expected_message
             = get_expected_log(msg, log_level, message_pair.first, extract_date_time(), thread_id);
-        EXPECT_EQ(string_stream.str(), expected_message.str());
+        EXPECT_EQ(string_stream_.str(), expected_message.str());
     }
 }

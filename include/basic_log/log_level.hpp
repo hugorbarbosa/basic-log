@@ -12,25 +12,21 @@ namespace basic_log {
 
 /**
  * @brief Possible logging levels.
- *
- * @note The logging level is the minimum level for logging a message. For example, if the level is
- * defined to "info", the messages with the higher levels "warning", "error" and "fatal" will also
- * be logged, but the messages with lower level ("debug" and "verbose") will not be logged.
  */
 enum class LogLevel : std::uint8_t {
-    /// No logging.
+    /// No logging (all logging calls are ignored).
     none,
-    /// "Fatal" logging level.
+    /// Level to log fatal messages only.
     fatal,
-    /// "Error" logging level.
+    /// Level to log error and higher-severity messages.
     error,
-    /// "Warning" logging level.
+    /// Level to log warnings and higher-severity messages.
     warning,
-    /// "Info" logging level.
+    /// Level to log informational and higher-severity messages.
     info,
-    /// "Debug" logging level.
+    /// Level to log debug and higher-severity messages.
     debug,
-    /// "Verbose" logging level.
+    /// Level to log all messages, including verbose diagnostics.
     verbose
 };
 

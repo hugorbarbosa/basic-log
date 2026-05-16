@@ -1,8 +1,9 @@
-project(basic_log_api)
+set(target_name "basic_log_api")
+add_library(${target_name} INTERFACE)
+add_library(${BASICLOG_PROJECT_NAME}::${target_name} ALIAS ${target_name})
 
-add_library(${PROJECT_NAME} INTERFACE)
-add_library(${BASICLOG_PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_sources(${target_name} PUBLIC FILE_SET HEADERS)
 
-target_include_directories(${PROJECT_NAME}
-    INTERFACE ${BASICLOG_INCLUDE_DIR}
-)
+target_link_libraries(${target_name} INTERFACE ${BASICLOG_PROJECT_NAME}::compile_options)
+
+target_include_directories(${target_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/..)

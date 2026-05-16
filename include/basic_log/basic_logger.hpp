@@ -99,18 +99,18 @@ private:
      *
      * @param msg_level Message level to check.
      *
-     * @return True if the message should be logged, false otherwise.
+     * @return True if the message shall be logged, false otherwise.
      */
     bool shall_log(const LogLevel msg_level) const noexcept;
 
     /// Output stream.
-    std::ostream& out_stream;
+    std::ostream& out_stream_;
     /// Logging level.
-    std::atomic<LogLevel> log_level;
+    std::atomic<LogLevel> log_level_;
     /// Mutex to protect access to the stream.
-    std::mutex stream_mutex;
+    std::mutex stream_mutex_;
     /// Message index.
-    std::uint64_t message_index{0};
+    std::uint64_t message_index_{0};
 };
 
 } // namespace basic_log

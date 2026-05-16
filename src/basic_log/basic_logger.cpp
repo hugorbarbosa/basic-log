@@ -10,19 +10,19 @@
 namespace basic_log {
 
 BasicLogger::BasicLogger(std::ostream& ostream, const LogLevel level) noexcept
-    : out_stream{ostream}
-    , log_level{level}
+    : out_stream_{ostream}
+    , log_level_{level}
 {
 }
 
 void BasicLogger::set_log_level(const LogLevel level) noexcept
 {
-    log_level = level;
+    log_level_ = level;
 }
 
 LogLevel BasicLogger::get_log_level() const noexcept
 {
-    return log_level;
+    return log_level_;
 }
 
 void BasicLogger::fatal(const std::string& msg) noexcept
@@ -58,17 +58,17 @@ void BasicLogger::verbose(const std::string& msg) noexcept
 void BasicLogger::log(const LogLevel level, const std::string& msg) noexcept
 {
     if (shall_log(level)) {
-        const std::lock_guard<std::mutex> lock(stream_mutex);
-        out_stream << "[" << ++message_index << "]" << "[" << get_date_time() << "]" << "["
-                   << get_log_level_str(level) << "]" << "[T" << std::this_thread::get_id() << "] "
-                   << msg << "\n"
-                   << std::flush;
+        const std::lock_guard<std::mutex> lock(stream_mutex_);
+        out_stream_ << "[" << ++message_index_ << "]" << "[" << get_date_time() << "]" << "["
+                    << get_log_level_str(level) << "]" << "[T" << std::this_thread::get_id() << "] "
+                    << msg << "\n"
+                    << std::flush;
     }
 }
 
 bool BasicLogger::shall_log(const LogLevel msg_level) const noexcept
 {
-    return log_level >= msg_level;
+    return log_level_ >= msg_level;
 }
 
 } // namespace basic_log

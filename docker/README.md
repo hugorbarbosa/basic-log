@@ -19,7 +19,7 @@ $ docker build . -t basiclog
 
 ## Run image
 
-Run image creating a container and mounting the project (`<project-directory>` must have the absolute path, e.g., c:\Projects\basic-log on Windows or /home/user/projects/basic-log on Linux):
+Run image creating a container and mounting the project (`<project-directory>` must have the absolute path, e.g., c:\projects\basic-log on Windows or /home/user/projects/basic-log on Linux):
 
 ```sh
 $ docker run -it --name mycontainer -v <project-directory>:/src basiclog
