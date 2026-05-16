@@ -197,3 +197,19 @@ jobs:
 
     - name: Build project and check CMake code with cmake-lint
       run: cmake --build --preset cmake-lint
+
+  build_examples:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Update submodules
+      run: git submodule update --init --recursive
+
+    - name: Configure project
+      run: cmake --preset examples
+
+    - name: Build project
+      run: cmake --build --preset examples
