@@ -198,7 +198,7 @@ jobs:
     - name: Build project and check CMake code with cmake-lint
       run: cmake --build --preset cmake-lint
 
-  build_examples:
+  examples:
     runs-on: ubuntu-latest
 
     steps:
@@ -213,3 +213,13 @@ jobs:
 
     - name: Build project
       run: cmake --build --preset examples
+
+    - name: Run examples
+      shell: bash
+      run: |
+        find ./build/examples/bin -type f -executable -exec sh -c '
+        for f do
+          echo "Running $f"
+          "$f" || exit 1
+        done
+        ' sh {} +
